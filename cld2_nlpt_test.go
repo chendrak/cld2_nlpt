@@ -5,7 +5,7 @@ import "testing"
 func TestDetectEnglish(t *testing.T) {
 	s := "This is an English sentence."
 	tag := Language("en")
-	lang, err := SimpleDetect(s)
+	lang, err := StaticDetect(s)
 	if tag != lang || err != nil {
 		t.Log("Expected: ", tag, "but got... ", lang, "with ERROR:", err)
 		t.Fail()

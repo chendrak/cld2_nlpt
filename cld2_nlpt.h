@@ -65,6 +65,7 @@ typedef int Language;
 extern "C" {
 #endif
 
+  /*
   typedef struct {
     const char* content_language_hint;      // "mi,en" boosts Maori and English
     const char* tld_hint;                   // "id" boosts Indonesian
@@ -82,42 +83,38 @@ extern "C" {
     uint16 pad;                 // Make multiple of 4 bytes
   } ResultChunk;
 
-  //typedef std::vector<ResultChunk> ResultChunkVector;
-
+  typedef std::vector<ResultChunk> ResultChunkVector;
   // A wrapper around ResultChunkVector, which is a C++ type.
   typedef void ResultChunks;
   ResultChunks *CLD2_ResultChunkVector_new();
   const ResultChunk *CLD2_ResultChunkVector_data(const ResultChunks *chunks);
   size_t CLD2_ResultChunkVector_size(const ResultChunks *chunks);
   void CLD2_ResultChunkVector_delete(ResultChunks *chunks);
+  */
 
   // These APIs are in a private header included by a public header, but
   // they're really useful, so let's assume they're public.
   const char* CLD2_LanguageName(Language lang);
   const char* CLD2_LanguageCode(Language lang);
   const char* CLD2_LanguageDeclaredName(Language lang);
-  const char* CLD2_Static_ExtDetectLanguageSummary(char *data);
+  Language CLD2_GetLanguageFromName(const char* src);
 
   // Return version text string, String is "code_version - data_build_date"
   const char* CLD2_DetectLanguageVersion();
-  Language CLD2_GetLanguageFromName(const char* src);
 
   // Scan interchange-valid UTF-8 bytes and detect most likely language
-  Language CLD2_DetectLanguage(const char* buffer,int buffer_length);
+  // with CLD2::ExtDetectLanguageSummary input predefined.
+  const char* CLD2_Static_ExtDetectLanguageSummary(char *data);
+
+  // Scan interchange-valid UTF-8 bytes and detect most likely language
+  Language CLD2_DetectLanguage(const char* buffer, int buffer_length, const char* language_hint);
+  Language CLD2_ExtDetectLanguageSummary(const char *buffer, int buffer_length, int rank, int percent, int normal_score);
 
   /*
+  // Same as CLD2_DetectLanguage, with hints supplied
   // Scan interchange-valid UTF-8 bytes and detect list of top 3 languages.
   // language3[0] is usually also the return value
-  Language CLD2_DetectLanguageSummary(const char* buffer,
-                          int buffer_length,
-                          Language* language3, // int return n-number top langs
-                          int* percent3,
-                          int* text_bytes);
-
-  // Same as above, with hints supplied
-  // Scan interchange-valid UTF-8 bytes and detect list of top 3 languages.
-  // language3[0] is usually also the return value
-  Language CLD2_DetectLanguageSummary2(const char* buffer,
+  Language CLD2_DetectLanguageSummaryHint(const char* buffer,
                           int buffer_length,
                           bool is_plain_text,
                           const char* tld_hint,       // "id" boosts Indonesian
@@ -127,6 +124,14 @@ extern "C" {
                           int* percent3,
                           int* text_bytes,
                           bool* is_reliable);
+
+  // Scan interchange-valid UTF-8 bytes and detect list of top 3 languages.
+  // language3[0] is usually also the return value
+  Language CLD2_DetectLanguageSummary(const char* buffer,
+                          int buffer_length,
+                          Language* language3, // int return n-number top langs
+                          int* percent3,
+                          int* text_bytes);
 
   // Scan interchange-valid UTF-8 bytes and detect list of top 3 extended
   // languages.
@@ -182,7 +187,7 @@ extern "C" {
                           int* text_bytes,
                           bool* is_reliable);
 
-  // Use this one.
+  // Eventually Use this one.
   // Hints are collected into a struct.
   // Flags are passed in (normally zero).
   //
@@ -207,6 +212,12 @@ extern "C" {
                           ResultChunks *resultchunkvector,
                           int* text_bytes,
                           bool* is_reliable);
+
+  // Return version text string
+  // String is "code_version - data_build_date"
+  const char* CLD2_DetectLanguageVersion();
+
+
   // Public use flags, debug output controls
   static const int kCLDFlagScoreAsQuads = 0x0100;  // Force Greek, etc. => quads
   static const int kCLDFlagHtml =         0x0200;  // Debug HTML => stderr

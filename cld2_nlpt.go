@@ -17,6 +17,12 @@ import (
 )
 
 /*
+const (
+	unknown = C.UNKNOWN_LANGUAGE
+)
+*/
+
+/*
 type LanguageDialect string
 
 type LanguageInfo struct {
@@ -50,8 +56,8 @@ func (e Cld2NlptError) Error() string {
 // It uses nlpt_wrapper.h and returns the language code, eg. 'en'.
 // C++ function sets the length to the that of the text.
 // See nlpt_wrapper tests.
-
-func SimpleDetect(text string) (lang Language, err error) {
+//
+func StaticDetect(text string) (lang Language, err error) {
 	cs := C.CString(text)
 	res := C.CLD2_Static_ExtDetectLanguageSummary(cs)
 	defer C.free(unsafe.Pointer(cs))
@@ -78,6 +84,7 @@ func DetectLanguage(buffer_length int, text, format string) (lang Language, err 
 	defer C.free(unsafe.Pointer(c_char))
 	cs := C.CString(text)
 	defer C.free(unsafe.Pointer(cs))
+	//result := C.CLD2_DetectLanguage(cs, b_length)
 	switch {
 	case format == "name":
 		c_char = C.CLD2_LanguageName(C.CLD2_DetectLanguage(cs, b_length))
@@ -92,7 +99,6 @@ func DetectLanguage(buffer_length int, text, format string) (lang Language, err 
 		lang = Language(C.GoString(c_char))
 		return lang, err
 	} else {
-		//lang = "corrupt"
 		err = Cld2NlptError{
 			time.Date(1989, 3, 15, 22, 30, 0, 0, time.UTC),
 			"result returned nil: C.CLD2_LanguageName(C.CLD2_DetectLanguage(cs, b_length))",
@@ -101,3 +107,34 @@ func DetectLanguage(buffer_length int, text, format string) (lang Language, err 
 	}
 	return
 }
+
+/*
+func DetectExtendedLanguage(buffer_length int, text, format string) (lang Language, err error) {
+	b_length := C.int(buffer_length)
+	var c_char = C.CString("")
+	defer C.free(unsafe.Pointer(c_char))
+	cs := C.CString(text)
+	defer C.free(unsafe.Pointer(cs))
+	switch {
+	case format == "name":
+		c_char = C.CLD2_LanguageName(C.CLD2_DetectLanguage(cs, b_length))
+	case format == "code":
+		c_char = C.CLD2_LanguageCode(C.CLD2_DetectLanguage(cs, b_length))
+	case format == "declname":
+		c_char = C.CLD2_LanguageDeclaredName(C.CLD2_DetectLanguage(cs, b_length))
+	default:
+		c_char = C.CLD2_LanguageCode(C.CLD2_DetectLanguage(cs, b_length))
+	}
+	if c_char != nil {
+		lang = Language(C.GoString(c_char))
+		return lang, err
+	} else {
+		err = Cld2NlptError{
+			time.Date(1989, 3, 15, 22, 30, 0, 0, time.UTC),
+			"result returned nil: C.CLD2_LanguageName(C.CLD2_DetectLanguage(cs, b_length))",
+		}
+		return lang, err
+	}
+	return
+}
+*/

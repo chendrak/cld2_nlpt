@@ -8,7 +8,6 @@
 #include "compact_lang_det.h"
 
 const char* CLD2_Static_ExtDetectLanguageSummary(char *data) {
-
     bool is_plain_text = true;
     CLD2::CLDHints cldhints = {NULL, NULL, 0, CLD2::UNKNOWN_LANGUAGE};
     bool allow_extended_lang = true;
@@ -19,7 +18,6 @@ const char* CLD2_Static_ExtDetectLanguageSummary(char *data) {
     CLD2::ResultChunkVector resultchunkvector;
     int text_bytes;
     bool is_reliable;
-
     int length = strlen(data);
 
     CLD2::Language summary_lang = CLD2::UNKNOWN_LANGUAGE;
@@ -38,7 +36,7 @@ const char* CLD2_Static_ExtDetectLanguageSummary(char *data) {
 
     return CLD2::LanguageCode(summary_lang);
 }
-
+/*
 ResultChunks *CLD2_ResultChunkVector_new() {
     return static_cast<ResultChunks*>(new CLD2::ResultChunkVector());
 }
@@ -60,6 +58,7 @@ void CLD2_ResultChunkVector_delete(ResultChunks *chunks) {
         static_cast<CLD2::ResultChunkVector *>(chunks);
     delete vec;
 }
+*/
 
 const char* CLD2_LanguageName(Language lang) {
     return CLD2::LanguageName(lang);
@@ -81,7 +80,35 @@ Language CLD2_GetLanguageFromName(const char* src) {
     return CLD2::GetLanguageFromName(src);
 }
 
-Language CLD2_DetectLanguage(const char* buffer,int buffer_length) {
+Language CLD2_ExtDetectLanguageSummary(const char *buffer, int buffer_length, int rank, int percent, int normal_score) {
+    bool is_plain_text = true;
+    bool allow_extended_lang = true;
+    bool is_reliable = true;
+    CLD2::CLDHints cldhints = {NULL, NULL, 0, CLD2::UNKNOWN_LANGUAGE};
+    int flags = 0;
+    CLD2::Language language3[rank]; //3
+    int percent3[percent]; //3
+    double normalized_score3[normal_score]; //3
+    CLD2::ResultChunkVector resultchunkvector;
+    int text_bytes;
+    if (buffer_length <= 0) {
+      buffer_length = strlen(buffer);
+    }
+
+    return CLD2::ExtDetectLanguageSummary(buffer, 
+            buffer_length,
+            is_plain_text,
+            &cldhints,
+            flags,
+            language3,
+            percent3,
+            normalized_score3,
+            &resultchunkvector,
+            &text_bytes,
+            &is_reliable);
+}
+
+Language CLD2_DetectLanguage(const char* buffer, int buffer_length) {
   bool is_plain_text = true;
   bool is_reliable = true;
   if (buffer_length <= 0) {
