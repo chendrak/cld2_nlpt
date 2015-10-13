@@ -16,7 +16,7 @@
 // Author: dsites@google.com (Dick Sites)
 // Converted to C by Eric Kidd <git@randomhacks.net>
 //
-// This is a stripped down version of cld2/public/compact_lang_det.h with
+// This is a stripped down version of clcompact_lang_det.h with
 // an extern wrapper and "CLD_" preprended to all the symbols we want to
 // link.
 //

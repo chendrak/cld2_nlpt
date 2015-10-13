@@ -3,10 +3,10 @@
 
 set -x;
 
-SVN=http://cld2.googlecode.com/svn/trunk/
+GH=https://github.com/CLD2Owners/cld2
 DIR=cld2
 # Checkout a temporary copy of the repository
-svn co ${SVN} ${DIR}
+git clone ${GH} ${DIR}
 
 cp ${DIR}/internal/*.h .
 cp ${DIR}/public/*.h .
