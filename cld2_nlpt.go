@@ -15,10 +15,13 @@
 // rust-cld2 wrapper for creating custom header and c++ files for the CLD2_* namespace https://github.com/emk/rust-cld2
 //
 
-package cld2_nlpt
+package cld2
 
-// #include <stdlib.h>
-// #include "cld2_nlpt.h"
+/*
+#cgo CXXFLAGS: -std=c++03
+#include <stdlib.h>
+#include "cld2_nlpt.h"
+*/
 import "C"
 
 import (
